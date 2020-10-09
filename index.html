@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <title>Document</title>
+</head>
+<body>
+<div class="App">
+  <div id="textUser"></div>
+  <div id="text"></div>
+  <div id="newGame"></div>
+  <div class="field">
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+    <div class="field-elem"></div>
+  </div>
+</div>
+<script>
+  // Масивы для проверки
+  const arrForCheck = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+  let arrIndexX = [], arrIndexZero = [], i = 0;
+  const zero = '<svg class="o">\n' +
+    '        <circle class="naught" cx="50" cy="50" r="30" fill="none" stroke-width="10" stroke-dasharray="200"\n' +
+    '                stroke-dashoffset="200" stroke-linecap="round"></circle>\n' +
+    '      </svg>'
+  const x = '<svg class="x">\n' +
+    '          <path class="cross" d="M 20 20 L 80 80" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="100"></path>\n' +
+    '          <path class="cross" d="M 80 20 L 20 80" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="100"></path>\n' +
+    '        </svg>'
+
+  document.querySelectorAll('.field-elem').forEach(function (item, idx) {
+    item.addEventListener('click', function () {
+      if (!item.classList.contains('done')) {
+        stepUser(item, idx)
+      } else
+        text.innerText = 'ячейк занята'
+    });
+  });
+
+
+  function step(item, whatFig, user, arr, idx) {
+    item.classList.add('done');
+    item.innerHTML = whatFig
+    textUser.innerText = 'Сейчас ходит ' + user
+    arr.push(idx)
+    item.classList.add(user);
+    viktory(arr)
+  }
+
+  function stepUser(item, idx) {
+    item.classList.add('done');
+    item.innerHTML = x
+    textUser.innerText = 'Сейчас ходит ноль'
+    arrIndexX.push(idx)
+    item.classList.add("x");
+    viktory(arrIndexX)
+  }
+
+  function viktory(array) {
+    // if (array.length > 2)
+    array.forEach(function (item, index, arr) {
+        arrForCheck.forEach(function (el, ind, ar) {
+          if (checkArray(array, el)) {
+            console.log("resetGame()")
+            resetGame()
+          } else {
+            console.log("pcStep")
+            setTimeout(function () {
+              pcStep()
+            }, 500);
+          }
+        })
+      }
+    )
+  }
+
+  function pcStep() {
+    let arrEmptyField = []
+    document.querySelectorAll('.field-elem').forEach(function (el, idx) {
+      if (!el.classList.contains('done')) {
+        arrEmptyField.push(idx)
+      }
+    });
+    let rand_2 = arrEmptyField[Math.floor(Math.random() * arrEmptyField.length)];
+    console.log(document.querySelectorAll('.field-elem')[rand_2]);
+    document.querySelectorAll('.field-elem')[rand_2].classList.add('done');
+    document.querySelectorAll('.field-elem')[rand_2].innerHTML = zero
+    textUser.innerText = 'Сейчас ходит ноль'
+    arrIndexZero.push(rand_2)
+    document.querySelectorAll('.field-elem')[rand_2].classList.add("zero");
+    viktory(arrIndexZero)
+  }
+
+  function resetGame() {
+    let arrIndexX = [], arrIndexZero = [], i = 0;
+    document.querySelectorAll('.field-elem').forEach(function (item, idx) {
+      if (item.classList.contains('done')) item.classList.remove('done');
+      if (item.classList.contains('X')) item.classList.remove('X');
+      if (item.classList.contains('Zero')) item.classList.remove('Zero');
+      item.innerHTML = ''
+    });
+  }
+
+  function checkArray(array, elArr) {
+    if (checkArrayEl(array, elArr[0]) >= 0 && checkArrayEl(array, elArr[1]) >= 0 && checkArrayEl(array, elArr[2]) >= 0)
+      return true
+  }
+
+  function checkArrayEl(array, number) {
+    if (array.indexOf(number) >= 0) return true
+  }
+
+
+</script>
+</body>
+</html>
